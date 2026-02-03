@@ -25,8 +25,8 @@ import biz.ganttproject.core.time.CalendarFactory
 import biz.ganttproject.core.time.TimeTestHelper.initLocale
 import biz.ganttproject.core.time.TimeTestHelper.newFriday
 import biz.ganttproject.core.time.TimeTestHelper.newMonday
-import biz.ganttproject.core.time.TimeTestHelper.newSaturday
 import biz.ganttproject.core.time.TimeTestHelper.newThursday
+import biz.ganttproject.core.time.TimeTestHelper.newSaturday
 import biz.ganttproject.core.time.impl.GPTimeUnitStack
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
