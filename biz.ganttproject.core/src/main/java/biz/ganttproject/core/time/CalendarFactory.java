@@ -35,7 +35,7 @@ public abstract class CalendarFactory {
     return (Calendar) Calendar.getInstance(ourLocaleApi.getLocale()).clone();
   }
   
-  protected static void setLocaleApi(LocaleApi localeApi) {
+  public static void setLocaleApi(LocaleApi localeApi) {
     ourLocaleApi = localeApi;
   }
 

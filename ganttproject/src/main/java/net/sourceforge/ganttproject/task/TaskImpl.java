@@ -385,6 +385,10 @@ public class TaskImpl implements Task {
   GanttCalendar calculateEnd() {
     GanttCalendar result = getStart().clone();
     Date newEnd = shiftDate(result.getTime(), getDuration());
+    // Add robustness for FSM testing
+    if (newEnd == null) {
+      newEnd = result.getTime();
+    }
     result.setTime(newEnd);
     return result;
   }
@@ -476,6 +480,9 @@ public class TaskImpl implements Task {
   @Override
   public Task[] getNestedTasks() {
     TaskHierarchyItem[] nestedItems = myTaskHierarchyItem.getNestedItems();
+    if (nestedItems == null) {
+      return new Task[0]; // return empty array instead of null
+    }
     Task[] result = new Task[nestedItems.length];
     for (int i = 0; i < nestedItems.length; i++) {
       result[i] = nestedItems[i].getTask();
@@ -555,6 +562,10 @@ public class TaskImpl implements Task {
   @Override
   public void setStart(GanttCalendar start) {
     Date closestWorkingStart = myManager.findClosestWorkingTime(start.getTime());
+    // Add robustness for FSM testing
+    if (closestWorkingStart == null) {
+      closestWorkingStart = start.getTime();
+    }
     start.setTime(closestWorkingStart);
     myStart = start;
     recalculateActivities();

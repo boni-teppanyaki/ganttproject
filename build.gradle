@@ -12,6 +12,7 @@ def readVersion() {
     return envVersion == null ? Files.readString(Paths.get(rootProject.projectDir.absolutePath, "ganttproject-builder", "VERSION")).trim() : envVersion
 }
 version = readVersion()
+
 // Config for all projects: deps come from Maven repository,
 // compile using Java 17, libs normally sit in lib
 allprojects {
@@ -63,14 +64,19 @@ allprojects {
             exceptionFormat = 'full'
         }
     }
+
+    // Add test dependencies here
+    dependencies {
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+        testImplementation 'org.mockito:mockito-core:5.5.0'
+        testImplementation 'org.mockito:mockito-junit-jupiter:5.5.0'
+    }
 }
 
 subprojects {
     group 'biz.ganttproject'
-    //version = "${readVersion()}"
     version = new Date().format("yy.MM.dd") + "-SNAPSHOT"
 }
-
 
 def addPublishing(project) {
     project.publishing {
@@ -119,15 +125,8 @@ def install(task, jar, project) {
             from(fileTree("$project.projectDir/src/main/")) {
                 include "resources/**"
             }
-
         }
         installLibs(jar, project)
         println "<<< $project.name"
     }
 }
-//
-//runtime {
-//    distDir = rootProject.distBinDir
-//    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-//    modules = ['java.base']
-//}
