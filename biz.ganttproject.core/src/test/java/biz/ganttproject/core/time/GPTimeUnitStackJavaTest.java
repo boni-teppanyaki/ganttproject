@@ -13,7 +13,7 @@ public class GPTimeUnitStackJavaTest {
 
   // Helper to transform LocalDate to Date
   public static Date toDate(LocalDate localDate) {
-    return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    return Date.from(localDate.atStartOfDay(ZoneId.of("UTC")).toInstant());
   }
 
   @Test
@@ -53,7 +53,7 @@ public class GPTimeUnitStackJavaTest {
     Date start = toDate(LocalDate.of(2026, 2, 2));
     Date end = toDate(LocalDate.of(2026, 5, 2));
     int duration = GPTimeUnitStack.DAY.duration(start, end).getLength();
-    assertEquals(88, duration);
+    assertEquals(89, duration);
   }
 
   @Test
@@ -61,7 +61,7 @@ public class GPTimeUnitStackJavaTest {
     Date start = toDate(LocalDate.of(2026, 2, 2));
     Date end = toDate(LocalDate.of(2027, 5, 2));
     int duration = GPTimeUnitStack.DAY.duration(start, end).getLength();
-    assertEquals(453, duration);
+    assertEquals(454, duration);
   }
 
   @Test
