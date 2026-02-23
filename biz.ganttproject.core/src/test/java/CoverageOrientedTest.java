@@ -31,6 +31,7 @@ public class CoverageOrientedTest {
 
   @Test
   void testConstructorsAndGetters() {
+
     Calendar cal = Calendar.getInstance();
     cal.set(2026, Calendar.FEBRUARY, 15);
     Date start = cal.getTime();
