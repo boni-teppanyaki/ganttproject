@@ -2,9 +2,9 @@ name: Java CI with Gradle
 
 on:
     push:
-        branches: [ master  ]
+        branches: [ master ]
     pull_request:
-        branches: [ master  ]
+        branches: [ master ]
 
 jobs:
     build:
@@ -18,6 +18,9 @@ jobs:
               with:
                   distribution: temurin
                   java-version: 21
+
+            - name: Install JavaFX
+              run: sudo apt-get update && sudo apt-get install -y openjfx
 
             - name: Grant execute permission for gradlew
               run: chmod +x gradlew
