@@ -19,11 +19,30 @@ jobs:
                   distribution: temurin
                   java-version: 21
 
-            - name: Install JavaFX
-              run: sudo apt-get update && sudo apt-get install -y openjfx
-
             - name: Grant execute permission for gradlew
               run: chmod +x gradlew
 
-            - name: Build and run tests
-              run: ./gradlew build
+            - name: Cache Gradle packages
+              uses: actions/cache@v3
+              with:
+                  path: |
+                      ~/.gradle/caches
+                      ~/.gradle/wrapper
+                  key: gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+                  restore-keys: |
+                      gradle-
+
+            - name: Set OS for JavaFX
+              id: set-os
+              run: |
+                  OS_NAME=$(uname | tr '[:upper:]' '[:lower:]')
+                  if [[ "$OS_NAME" == "darwin" ]]; then
+                    echo "os=mac" >> $GITHUB_ENV
+                  elif [[ "$OS_NAME" == "linux" ]]; then
+                    echo "os=linux" >> $GITHUB_ENV
+                  else
+                    echo "os=win" >> $GITHUB_ENV
+                  fi
+
+            - name: Build and test
+              run: ./gradlew build -Pjavafx.os=$os
