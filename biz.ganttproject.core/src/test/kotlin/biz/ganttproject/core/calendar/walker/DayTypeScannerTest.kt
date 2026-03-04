@@ -31,6 +31,8 @@ import biz.ganttproject.core.time.impl.GPTimeUnitStack
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 import java.text.DateFormat
 import java.util.*
 
@@ -45,8 +47,37 @@ class DayTypeScannerTest {
     calendar.setWeekDayType(Calendar.SATURDAY, GPCalendar.DayType.WEEKEND)
     calendar.setWeekDayType(Calendar.SUNDAY, GPCalendar.DayType.WEEKEND)
 
-    val scanner = DayTypeScan(calendar, newThursday().time, GPCalendar.DayType.NON_WORKING, GPTimeUnitStack.DAY)
+    val scanner = DayTypeScan(calendar, newThursday().time,
+      GPCalendar.DayType.NON_WORKING, GPTimeUnitStack.DAY)
     assertEquals(newSaturday().time,  scanner.scan())
+  }
+
+  @Test
+  fun `scan finds non-working day with mocked calendar`() {
+    val mockCalendar = mock(GPCalendar::class.java)
+
+    val thursday = newThursday().time
+    val friday = newFriday().time
+    val saturday = newSaturday().time
+
+    // Stub getDayMask() for all relevant dates; from thursday to saturday in this case
+    `when`(mockCalendar.getDayMask(thursday))
+      .thenReturn(GPCalendar.DayType.WORKING.ordinal)
+    `when`(mockCalendar.getDayMask(thursday))
+      .thenReturn(GPCalendar.DayType.WORKING.ordinal)
+    `when`(mockCalendar.getDayMask(friday))
+      .thenReturn(GPCalendar.DayType.NON_WORKING.ordinal)
+
+
+    // Construct DayTypeScan with mocked calendar
+    val scanner = DayTypeScan(
+      calendar = mockCalendar,
+      startDate = thursday,
+      lookupDayType = GPCalendar.DayType.NON_WORKING,
+      framer = GPTimeUnitStack.DAY
+    )
+
+    assertEquals(saturday, scanner.scan())
   }
 
   @Test
