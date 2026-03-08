@@ -3,6 +3,7 @@ import java.nio.file.Paths
 
 plugins {
     id "org.jetbrains.kotlin.jvm" version "2.2.10" apply false
+    id 'com.github.spotbugs' version '5.0.13'
 }
 ext.distBinDir = file('ganttproject-builder/dist-bin')
 ext.pluginsDir = file("ganttproject-builder/dist-bin/plugins/base")
@@ -26,6 +27,19 @@ allprojects {
         maven {
             url "https://sandec.jfrog.io/artifactory/repo"
         }
+    }
+    spotbugs {
+        toolVersion = "4.8.12"  // SpotBugs engine version
+        effort = "max"
+        reportLevel = "medium"
+    }
+
+    tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
+        reports {
+            xml.required = false
+            html.required = true
+        }
+        ignoreFailures = true // do not fail build on warnings
     }
     apply plugin: 'java'
     ext {
@@ -76,6 +90,24 @@ allprojects {
 subprojects {
     group 'biz.ganttproject'
     version = new Date().format("yy.MM.dd") + "-SNAPSHOT"
+
+    apply plugin: 'java'
+    apply plugin: 'com.github.spotbugs'
+
+    afterEvaluate {
+        tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
+            // Only set the compiled classes and source directories
+            classes = files(sourceSets.main.output)
+            sourceDirs = files(sourceSets.main.allSource.srcDirs)
+
+            reports {
+                xml.required = false
+                html.required = true
+            }
+
+            ignoreFailures = true
+        }
+    }
 }
 
 def addPublishing(project) {
